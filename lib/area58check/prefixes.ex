@@ -62,6 +62,7 @@ defmodule Area58check.Prefixes do
       {nil, <<1, 2, 3, 4>>}
   """
   # Ex: get_binary_version(:bip32_privkey)
+  @spec get_binary_version(atom) :: {atom, binary}
   def get_binary_version(atom) when is_atom(atom) do
     case @version_prefixes[atom] do
       nil ->
@@ -75,18 +76,21 @@ defmodule Area58check.Prefixes do
     end
   end
   # Ex: get_binary_version(0x043587CF)
+  @spec get_binary_version(pos_integer) :: {atom | nil, binary}
   def get_binary_version(num) when is_number(num) do
     num
     |>Integer.digits(256) #=> [4, 136, 178, 30]
     |>get_binary_version()
   end
   # Ex: get_binary_version([4, 136, 178, 30])
+  @spec get_binary_version([byte]) :: {atom | nil, binary}
   def get_binary_version(dec) when is_list(dec) do
     dec
     |>:binary.list_to_bin() #=> <<4, 136, 178, 30>>
     |>get_binary_version()
   end
   # Ex: get_binary_version(<<4, 136, 178, 30>>)
+  @spec get_binary_version(binary) :: {atom | nil, binary}
   def get_binary_version(bin) when is_binary(bin) do
     {@prefix_versions_map[bin], bin} #=> {:bip32_privkey, <<4, 136, 178, 30>>}
   end
@@ -119,6 +123,10 @@ defmodule Area58check.Prefixes do
       version: nil}}
 
   """
+  @spec get_version(binary) :: {:ok,
+    %{decoded: binary, version: atom | nil, version_bin: binary} |
+    %{decoded: binary, version: nil, version_bin: binary | <<>>}
+  }
   def get_version(bin) when is_binary(bin) do
     _get_version(bin, @prefix_versions)
   end

@@ -33,6 +33,7 @@ defmodule Area58check.Decoder do
       iex> decode_string("Ol")
       {:error, :incorrect_base58}
   """
+  @spec decode_string(String.t) :: {:ok, Area58check.t} | {:error, atom}
   def decode_string(string) do
     string # "1zhML"
     |>Base58symbolChart.check_valid_base58_chars() #=> "1zhML" or {:error, :incorrect_base58}

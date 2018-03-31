@@ -24,6 +24,7 @@ defmodule Area58check.Encoder do
     iex> encode_string("", <<0>>)
     "1Wh4bh"
   """
+  @spec encode_string(binary, binary) :: String.t | no_return()
   def encode_string(payload, version_prefix) when is_binary(version_prefix) do
     # Concatenate the version with the string to be encoded
     versioned_payload = version_prefix <> payload # <<0>> <> <<1, 2, 3>>

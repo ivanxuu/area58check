@@ -4,6 +4,12 @@ defmodule Area58check do
   """
   alias __MODULE__.{Prefixes, Encoder, Decoder}
 
+  @type base58version :: atom | binary  | pos_integer | nonempty_list(0..255)
+  @type t :: %Area58check{decoded: binary,
+    encoded: String.t,
+    version: atom,
+    version_bin: binary}
+
   defstruct decoded: <<>>, encoded: "", version: nil, version_bin: <<>>
 
   @default_options []
@@ -61,6 +67,7 @@ defmodule Area58check do
       iex> encode("Any string", version: :sahdkjfhkjasdfhksldjf)
       ** (ArgumentError) :sahdkjfhkjasdfhksldjf is not a recognized version. You can either pass a charlist (ex: [4, 136, 178, 30]), number (ex: 70617039), hexadecimal (ex: 0x043587CF), binary version (ex: <<4, 136, 178, 30>>), or a recognized atom like any of: :bip32_privkey, :bip32_pubkey, :p2pkh, :p2sh, :tesnet_bip32_privkey, :tesnet_bip32_pubkey, :tesnet_p2pkh, :tesnet_p2sh, :tesnet_wif, :wif
   """
+  @spec encode(String.t, [version: any] | [] ) :: t
   def encode(payload, options \\ []) do
     options = Keyword.merge(@default_options, options)
     # Ex: get_binary_version(:pubkey_hash) # => {<<0>>}
@@ -101,6 +108,7 @@ defmodule Area58check do
      iex> decode("50pneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb")
      {:error, :incorrect_base58}
   """
+  @spec decode(String.t) :: {:ok, Area58check.t} | {:error, atom()}
   def decode(payload) do
     Decoder.decode_string(payload)
   end

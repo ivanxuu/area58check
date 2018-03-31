@@ -30,6 +30,7 @@ defmodule Area58check.Base58symbolChart do
     iex> base58_to_ascii([0,1,2,3,58])
     ** (ArgumentError) You tried to convert `58` to base58 but is not a number < 58, or a list of numbers where each < 58
   """
+  @spec base58_to_ascii([0..57]) :: binary()
   # Ex: ascii_to_base58([]) #=> ""
   def base58_to_ascii([]), do: ""
   # Ex: ascii_to_base58([0,1,2,3,57]) #=> "123z"
@@ -52,6 +53,7 @@ defmodule Area58check.Base58symbolChart do
     iex> base58_to_ascii_char(59)
     ** (ArgumentError) You tried to convert `59` to base58 but is not a number < 58, or a list of numbers where each < 58
   """
+  @spec base58_to_ascii_char(0..57) :: <<_::8>>
   # Convert number to a character of the base58 according the
   # base58 character table.
   # Ex: ascii_to_base58(57) #=> "z"
@@ -83,6 +85,7 @@ defmodule Area58check.Base58symbolChart do
     ** (ArgumentError) You tried to convert `O` from base58 but is not a valid character of base58. Valid characters are 123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz
 
   """
+  @spec ascii_to_base58(binary()) :: [0..57]
   # Ex: ascii_to_base58("") #=> []
   def ascii_to_base58(""), do: []
   # Ex: ascii_to_base58("1234z") #=> [0,1,2,3,57]
@@ -107,6 +110,7 @@ defmodule Area58check.Base58symbolChart do
     iex> ascii_to_base58("0")
     ** (ArgumentError) You tried to convert `0` from base58 but is not a valid character of base58. Valid characters are 123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz
   """
+  @spec ascii_to_base58_char(binary()) :: 0..57
   def ascii_to_base58_char(<<char>>) do
     case @ascii_chart[char] do
       integer when integer < 58 -> integer
@@ -135,6 +139,8 @@ defmodule Area58check.Base58symbolChart do
     {:error, :incorrect_base58}
 
   """
+  @spec check_valid_base58_chars(binary()) ::
+     binary()| {:error, :incorrect_base58}
   def check_valid_base58_chars(string) when is_binary(string) do
     String.match?(string, ~r/^[#{@charset}]*$/)
     |>if(do: string, else: {:error, :incorrect_base58})

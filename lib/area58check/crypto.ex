@@ -23,6 +23,7 @@ defmodule Area58check.Crypto do
     iex> _pubkey = ripemd160(sha256(uncompressed_pubkey))
     <<124, 106, 230, 190, 9, 150, 81, 133, 169, 75, 13, 161, 139, 201, 42, 157, 252, 238, 97, 23>>
   """
+  @spec sha256(String.t) :: <<_::256>>
   def sha256(payload) do
     :crypto.hash(:sha256, payload)
   end
@@ -46,6 +47,7 @@ defmodule Area58check.Crypto do
     iex> ripemd160(sha256(uncompressed_pubkey))
     <<124, 106, 230, 190, 9, 150, 81, 133, 169, 75, 13, 161, 139, 201, 42, 157, 252, 238, 97, 23>>
   """
+  @spec ripemd160(String.t) :: <<_::160>>
   def ripemd160(payload) do
     :crypto.hash(:ripemd160, payload)
   end
@@ -81,6 +83,7 @@ defmodule Area58check.Crypto do
     iex> checksum(version_prefix <> privkey)
     <<2, 252, 125, 189>>
   """
+  @spec checksum(String.t | [byte]) :: <<_::64>>
   def checksum(payload) do
     payload
     |>sha256() # Return a 64 Bytes hash
