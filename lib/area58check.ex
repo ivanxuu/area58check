@@ -12,6 +12,7 @@ defmodule Area58check do
   encoded. E.g. If you are encoding a private key use `:wif`, if you are
   encoding a bitcoin address use `:p2pkh`. The version prefix will be
   embeded in the encoded version.
+  You can also use other types described in `t:prefix_version_type/0`
 
   ## Checksum
   The encoded versions will include a few bytes to ensure that its
@@ -23,7 +24,7 @@ defmodule Area58check do
   `encode/2` function indicating the prefix version you want:
 
       iex> privkey = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF" |> Base.decode16!()
-      iex> %{decoded: _decoded} = encode(privkey, version: <<128>>)
+      iex> %{decoded: _decoded} = encode(privkey, <<128>>)
       %Area58check{
         encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
         decoded: <<1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239>>,
@@ -43,27 +44,41 @@ defmodule Area58check do
   """
   alias __MODULE__.{Prefixes, Encoder, Decoder}
 
-  @type base58version :: atom | binary  | pos_integer | nonempty_list(0..255)
-  @type t :: %Area58check{decoded: binary,
+  @typedoc """
+  Indicates the type of bitcoin string being encoded/decoded. E.g.: mainet
+  WalletImportFormat (WIF), bitcoin address, testnet wif, etc.
+
+  The prefixed version can be provided in several formats:
+
+    - An atom. E.g.: `:testnet_p2sh`
+    - The hexadecimal or numeric representation. E.g.: `0x043587CF`
+    - Character list: E.g.: `[4, 136, 178, 30]`
+    - Binary string: E.g.: `<<4, 136, 178, 30>>`
+  """
+  @type prefix_version_type :: atom | binary | pos_integer | nonempty_list(0..255)
+  @typedoc """
+  A result returned by both `encode/2` and `decode/1` with the prefixed
+  version, the encoded base58check string, and the decoded binary.
+  """
+  @type t :: %Area58check{
+    decoded: binary,
     encoded: String.t,
     version: atom,
     version_bin: binary}
 
   defstruct decoded: <<>>, encoded: "", version: nil, version_bin: <<>>
 
-  @default_options []
-
   @doc """
-  Encodes a string using base58check with the provided prefix version.
+  Encodes a string using base58check with the provided version prefix .
 
-  Version option argument is mandatory. The prefix can be a binary,
-  integer or a list of bytes (see examples). All available prefixes are
-  coded in the module `Area58check.Prefixes`.
+  The argument `version_prefix` can be a binary, integer or a list of
+  bytes (see examples next paragraph).
+  All available prefixes are coded in the module `Area58check.Prefixes`.
 
   ## Examples
 
       iex> privkey = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF" |> Base.decode16!()
-      iex> encode(privkey, version: :wif)
+      iex> encode(privkey, :wif)
       %Area58check{
         encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
         decoded: <<1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239>>,
@@ -73,21 +88,21 @@ defmodule Area58check do
   The version prefix can be indicated in several alternative ways:
 
       iex> privkey = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF" |> Base.decode16!()
-      iex> encode(privkey, version: <<128>>)
+      iex> encode(privkey, <<128>>)
       %Area58check{
         encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
         decoded: <<1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239>>,
         version: :wif,
         version_bin: <<128>>
       }
-      iex> encode(privkey, version: 0x80)
+      iex> encode(privkey, 0x80)
       %Area58check{
         encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
         decoded: <<1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239>>,
         version: :wif,
         version_bin: <<128>>
       }
-      iex> encode(privkey, version: [128])
+      iex> encode(privkey, [128])
       %Area58check{
         encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
         decoded: <<1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239>>,
@@ -100,7 +115,7 @@ defmodule Area58check do
       iex> privkey = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF" |> Base.decode16!()
       iex> {uncompressed_pubkey, _priv_key} = :crypto.generate_key(:ecdh, :crypto.ec_curve(:secp256k1), privkey)
       iex> uncompressed_pubkey = :crypto.hash(:ripemd160, :crypto.hash(:sha256, uncompressed_pubkey))
-      iex> encode(uncompressed_pubkey, version: <<0>>)
+      iex> encode(uncompressed_pubkey, <<0>>)
       %Area58check{
         encoded: "1CLrrRUwXswyF2EVAtuXyqdk4qb8DSUHCX",
         decoded: <<124, 106, 230, 190, 9, 150, 81, 133, 169, 75, 13, 161, 139, 201, 42, 157, 252, 238, 97, 23>>,
@@ -109,14 +124,13 @@ defmodule Area58check do
 
   If version is an atom, and is not recognized returns error:
 
-      iex> encode("Any string", version: :sahdkjfhkjasdfhksldjf)
+      iex> encode("Any string", :sahdkjfhkjasdfhksldjf)
       ** (ArgumentError) Version prefix :sahdkjfhkjasdfhksldjf is not a recognized version. You can either pass a charlist (ex: [4, 136, 178, 30]), number (ex: 70617039), hexadecimal (ex: 0x043587CF), binary version (ex: <<4, 136, 178, 30>>), or a recognized atom like any of: :bip32_privkey, :bip32_pubkey, :p2pkh, :p2sh, :tesnet_bip32_privkey, :tesnet_bip32_pubkey, :tesnet_p2pkh, :tesnet_p2sh, :tesnet_wif, :wif
   """
-  @spec encode(String.t, [version: any] | [] ) :: t
-  def encode(payload, options \\ []) do
-    options = Keyword.merge(@default_options, options)
-    # Ex: get_binary_version(:pubkey_hash) # => {<<0>>}
-    {version, version_bin} = Prefixes.get_binary_version( options[:version] )
+  @spec encode(String.t, prefix_version_type) :: t
+  def encode(payload, version_prefix ) do
+    # E.g.: get_binary_version(:pubkey_hash) # => {<<0>>}
+    {version, version_bin} = Prefixes.get_binary_version( version_prefix )
     %Area58check{
       encoded: Encoder.encode_string(payload, version_bin),
       decoded: payload,
@@ -126,7 +140,7 @@ defmodule Area58check do
 
   @doc """
   Decodes a previously encoded string using base58check returning the
-  used prefixed version, the original binary.
+  used version prefix, the original binary.
 
   An error message will be returned in case there was a checksum error
   or a character is not valid.
@@ -154,7 +168,7 @@ defmodule Area58check do
       iex> decode("")
       {:error, :checksum_incorrect}
 
-  If any character is not a base58 character (Ex: `0`)
+  If any character is not a base58 character (E.g.: `0`)
 
       iex> decode("50pneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb")
       {:error, :incorrect_base58}
