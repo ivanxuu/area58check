@@ -1,8 +1,7 @@
 defmodule Area58check.Crypto do
-  @moduledoc """
-  Several crypto related functions in erlang and wrapped in elixir
-  functions.
-  """
+  @moduledoc false
+  #Several crypto related functions in erlang and wrapped in elixir
+  #functions.
 
   @doc """
   sha256 hash function.
