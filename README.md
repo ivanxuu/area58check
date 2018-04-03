@@ -135,5 +135,5 @@ end
 ```
 
 The docs can be found at
-[https://hexdocs.pm/area58](https://hexdocs.pm/area58).
+[https://hexdocs.pm/area58check](https://hexdocs.pm/area58check).
 
