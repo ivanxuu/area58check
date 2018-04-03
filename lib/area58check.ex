@@ -65,7 +65,7 @@ defmodule Area58check do
   If version is an atom, and is not recognized returns error:
 
       iex> encode("Any string", version: :sahdkjfhkjasdfhksldjf)
-      ** (ArgumentError) :sahdkjfhkjasdfhksldjf is not a recognized version. You can either pass a charlist (ex: [4, 136, 178, 30]), number (ex: 70617039), hexadecimal (ex: 0x043587CF), binary version (ex: <<4, 136, 178, 30>>), or a recognized atom like any of: :bip32_privkey, :bip32_pubkey, :p2pkh, :p2sh, :tesnet_bip32_privkey, :tesnet_bip32_pubkey, :tesnet_p2pkh, :tesnet_p2sh, :tesnet_wif, :wif
+      ** (ArgumentError) Version prefix :sahdkjfhkjasdfhksldjf is not a recognized version. You can either pass a charlist (ex: [4, 136, 178, 30]), number (ex: 70617039), hexadecimal (ex: 0x043587CF), binary version (ex: <<4, 136, 178, 30>>), or a recognized atom like any of: :bip32_privkey, :bip32_pubkey, :p2pkh, :p2sh, :tesnet_bip32_privkey, :tesnet_bip32_pubkey, :tesnet_p2pkh, :tesnet_p2sh, :tesnet_wif, :wif
   """
   @spec encode(String.t, [version: any] | [] ) :: t
   def encode(payload, options \\ []) do

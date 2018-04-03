@@ -53,7 +53,7 @@ defmodule Area58check.Prefixes do
       iex> get_binary_version(<<4, 136, 178, 30>>)
       {:bip32_pubkey, <<4, 136, 178, 30>>}
       iex> get_binary_version(:unknown_jkhfldksajf)
-      ** (ArgumentError) :unknown_jkhfldksajf is not a recognized version. You can either pass a charlist (ex: [4, 136, 178, 30]), number (ex: 70617039), hexadecimal (ex: 0x043587CF), binary version (ex: <<4, 136, 178, 30>>), or a recognized atom like any of: :bip32_privkey, :bip32_pubkey, :p2pkh, :p2sh, :tesnet_bip32_privkey, :tesnet_bip32_pubkey, :tesnet_p2pkh, :tesnet_p2sh, :tesnet_wif, :wif
+      ** (ArgumentError) Version prefix :unknown_jkhfldksajf is not a recognized version. You can either pass a charlist (ex: [4, 136, 178, 30]), number (ex: 70617039), hexadecimal (ex: 0x043587CF), binary version (ex: <<4, 136, 178, 30>>), or a recognized atom like any of: :bip32_privkey, :bip32_pubkey, :p2pkh, :p2sh, :tesnet_bip32_privkey, :tesnet_bip32_pubkey, :tesnet_p2pkh, :tesnet_p2sh, :tesnet_wif, :wif
 
   I can use one I just made up. But I won't get recognized, so there
   won't be any atom telling the type.
@@ -66,7 +66,8 @@ defmodule Area58check.Prefixes do
   def get_binary_version(atom) when is_atom(atom) do
     case @version_prefixes[atom] do
       nil ->
-        raise ArgumentError, message: "#{inspect atom} is not a " <>
+        raise ArgumentError, message:
+          "Version prefix #{inspect atom} is not a " <>
           "recognized version. You can either pass a charlist "<>
           "(ex: [4, 136, 178, 30]), number (ex: 70617039), "<>
           "hexadecimal (ex: 0x043587CF), binary version "<>
