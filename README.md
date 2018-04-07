@@ -129,7 +129,7 @@ by adding `area58check` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:area58check, "~> 0.1.0"},
+    {:area58check, "~> 0.1"},
   ]
 end
 ```
