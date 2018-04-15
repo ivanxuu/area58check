@@ -19,7 +19,7 @@ this library you can...
     iex> privkey = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF" |> Base.decode16!()
     iex> {uncompressed_pubkey, _priv_key} = :crypto.generate_key(:ecdh, :crypto.ec_curve(:secp256k1), privkey)
     iex> uncompressed_pubkey = :crypto.hash(:ripemd160, :crypto.hash(:sha256, uncompressed_pubkey))
-    iex> Area58check.encode(uncompressed_pubkey, version: <<0>>)
+    iex> Area58check.encode(uncompressed_pubkey, <<0>>)
     %{encoded: "1CLrrRUwXswyF2EVAtuXyqdk4qb8DSUHCX",
       version: :p2pkh,
       version_bin: <<0>>}
@@ -56,19 +56,19 @@ correct or not.
 Encode a private key into WIF (Wallet Import Format):
 
     iex> privkey = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF" |> Base.decode16!()
-    iex> Area58check.encode(privkey, version: :wif )
+    iex> Area58check.encode(privkey, :wif)
     %{encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
       version: :wif,
       version_bin: <<128>>}
-    iex> Area58check.encode(privkey, version: [128] )
+    iex> Area58check.encode(privkey, [128])
     %{encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
       version: :wif,
       version_bin: <<128>>}
-    iex> Area58check.encode(privkey, version: <<128>>)
+    iex> Area58check.encode(privkey, <<128>>)
     %{encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
       version: :wif,
       version_bin: <<128>>}
-    iex> Area58check.encode(privkey, version: 0x80)
+    iex> Area58check.encode(privkey, 0x80)
     %{encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
       version: :wif,
       version_bin: <<128>>}
@@ -77,14 +77,14 @@ Encode a public key into an address:
 
     iex> {uncompressed_pubkey, _priv_key} = :crypto.generate_key(:ecdh, :crypto.ec_curve(:secp256k1), privkey)
     iex> derived_uncomp_pubkey = :crypto.hash(:ripemd160, :crypto.hash(:sha256, uncompressed_pubkey))
-    iex> Area58check.encode(derived_uncomp_pubkey, version: 0x00)
+    iex> Area58check.encode(derived_uncomp_pubkey, 0x00)
     %{encoded: "1CLrrRUwXswyF2EVAtuXyqdk4qb8DSUHCX",
       version: :p2pkh,
       version_bin: <<0>>}
 
 Error when version is unknown:
 
-    iex> Area58check.encode(privkey, version: :jhkdsfajhkfdasjhkfd)
+    iex> Area58check.encode(privkey, :jhkdsfajhkfdasjhkfd)
     ** (ArgumentError) :jhkdsfajhkfdasjhkfd is not a recognized version.
     You can either pass a charlist (ex: [4, 136, 178, 30]), number (ex:
     70617039), hexadecimal (ex: 0x043587CF), binary version (ex: <<4,
