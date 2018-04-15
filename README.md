@@ -89,8 +89,8 @@ Error when version is unknown:
     You can either pass a charlist (ex: [4, 136, 178, 30]), number (ex:
     70617039), hexadecimal (ex: 0x043587CF), binary version (ex: <<4,
     136, 178, 30>>), or a recognized atom like any of: :bip32_privkey,
-    :bip32_pubkey, :p2pkh, :p2sh, :tesnet_bip32_privkey,
-    :tesnet_bip32_pubkey, :tesnet_p2pkh, :tesnet_p2sh, :tesnet_wif, :wif
+    :bip32_pubkey, :p2pkh, :p2sh, :testnet_bip32_privkey,
+    :testnet_bip32_pubkey, :testnet_p2pkh, :testnet_p2sh, :testnet_wif, :wif
 
 #### Decoding
 

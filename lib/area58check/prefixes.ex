@@ -15,11 +15,11 @@ defmodule Area58check.Prefixes do
     wif:                      <<128>>,              # 0x80	      Private key (WIF, un/compressed pubkey)	        5, K or L	L1aW4aubDFB7yfras2S1mN3bqg9nwySY8nkoLmJebSLD5BWv3ENZ
     bip32_pubkey:             <<4, 136, 178, 30>>,  # 0x0488B21E	HD Wallet, BIP32 pubkey	                        xpub	    xpub661MyMwAqRbcEYS8w7XLSVeEsBXy79zSzH1J8vCdxAZningWLdN3...
     bip32_privkey:            <<4, 136, 173, 228>>, # 0x0488ADE4	HD Wallet, BIP32 private key	                  xprv	    xprv9s21ZrQH143K24Mfq5zL5MhWK9hUhhGbd45hLXo2Pq2oqzMMo63o...
-    tesnet_p2pkh:             <<111>>,              # 0x6F	      Testnet pubkey hash	                            m or n	  mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn
-    tesnet_p2sh:              <<196>>,              # 0xC4	      Testnet script hash	                            2	        2MzQwSSnBHWHqSAqtTVQ6v47XtaisrJa1Vc
-    tesnet_wif:               <<239>>,              # 0xEF	      Testnet Private key (WIF, un/compressed pubkey)	c or 9    cNJFgo1driFnPcBdBX8BrJrpxchBWXwXCvNH5SoSkdcF6JXXwHMm
-    tesnet_bip32_pubkey:      <<4, 53, 135, 207>>,  # 0x043587CF	Testnet HD Wallet, BIP32 pubkey	                tpub	    tpubD6NzVbkrYhZ4WLczPJWReQycCJdd6YVWXubbVUFnJ5KgU5MDQrD9...
-    tesnet_bip32_privkey:     <<4, 53, 131, 148>>,  # 0x04358394	Testnet HD Wallet, BIP32 private key	          tprv	    tprv8ZgxMBicQKsPcsbCVeqqF1KVdH7gwDJbxbzpCxDUsoXHdb6SnTPY...
+    testnet_p2pkh:             <<111>>,              # 0x6F	      Testnet pubkey hash	                            m or n	  mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn
+    testnet_p2sh:              <<196>>,              # 0xC4	      Testnet script hash	                            2	        2MzQwSSnBHWHqSAqtTVQ6v47XtaisrJa1Vc
+    testnet_wif:               <<239>>,              # 0xEF	      Testnet Private key (WIF, un/compressed pubkey)	c or 9    cNJFgo1driFnPcBdBX8BrJrpxchBWXwXCvNH5SoSkdcF6JXXwHMm
+    testnet_bip32_pubkey:      <<4, 53, 135, 207>>,  # 0x043587CF	Testnet HD Wallet, BIP32 pubkey	                tpub	    tpubD6NzVbkrYhZ4WLczPJWReQycCJdd6YVWXubbVUFnJ5KgU5MDQrD9...
+    testnet_bip32_privkey:     <<4, 53, 131, 148>>,  # 0x04358394	Testnet HD Wallet, BIP32 private key	          tprv	    tprv8ZgxMBicQKsPcsbCVeqqF1KVdH7gwDJbxbzpCxDUsoXHdb6SnTPY...
   }
   # Show as a list like :bip32_privkey, :bip32_pubkey, :p2pkh, :p2sh...
   @prefixes_list @version_prefixes |> Map.keys() |> Enum.map(&(inspect(&1))) |> Enum.join(", ")
@@ -53,7 +53,7 @@ defmodule Area58check.Prefixes do
       iex> get_binary_version(<<4, 136, 178, 30>>)
       {:bip32_pubkey, <<4, 136, 178, 30>>}
       iex> get_binary_version(:unknown_jkhfldksajf)
-      ** (ArgumentError) Version prefix :unknown_jkhfldksajf is not a recognized version. You can either pass a charlist (ex: [4, 136, 178, 30]), number (ex: 70617039), hexadecimal (ex: 0x043587CF), binary version (ex: <<4, 136, 178, 30>>), or a recognized atom like any of: :bip32_privkey, :bip32_pubkey, :p2pkh, :p2sh, :tesnet_bip32_privkey, :tesnet_bip32_pubkey, :tesnet_p2pkh, :tesnet_p2sh, :tesnet_wif, :wif
+      ** (ArgumentError) Version prefix :unknown_jkhfldksajf is not a recognized version. You can either pass a charlist (ex: [4, 136, 178, 30]), number (ex: 70617039), hexadecimal (ex: 0x043587CF), binary version (ex: <<4, 136, 178, 30>>), or a recognized atom like any of: :bip32_privkey, :bip32_pubkey, :p2pkh, :p2sh, :testnet_bip32_privkey, :testnet_bip32_pubkey, :testnet_p2pkh, :testnet_p2sh, :testnet_wif, :wif
 
   I can use one I just made up. But I won't get recognized, so there
   won't be any atom telling the type.
@@ -113,7 +113,7 @@ defmodule Area58check.Prefixes do
     {:ok, %{
       decoded: <<3, 4, 5, 6>>,
       version_bin: <<4, 53, 135, 207>>,
-      version: :tesnet_bip32_pubkey}}
+      version: :testnet_bip32_pubkey}}
 
   If the version prefix can't be recognized:
 

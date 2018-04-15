@@ -6,7 +6,7 @@ defmodule Area58check.Mixfile do
   def project do
     [
       app: :area58check,
-      version: "0.1.0", # Major: Incompatible API changes
+      version: "0.1.1", # Major: Incompatible API changes
                         # Minor: Backward-compatible added functionality
                         # Patch: Backward-compatible bug fixes
       elixir: "~> 1.5",
