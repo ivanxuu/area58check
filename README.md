@@ -20,7 +20,9 @@ this library you can...
     iex> {uncompressed_pubkey, _priv_key} = :crypto.generate_key(:ecdh, :crypto.ec_curve(:secp256k1), privkey)
     iex> uncompressed_pubkey = :crypto.hash(:ripemd160, :crypto.hash(:sha256, uncompressed_pubkey))
     iex> Area58check.encode(uncompressed_pubkey, <<0>>)
-    %{encoded: "1CLrrRUwXswyF2EVAtuXyqdk4qb8DSUHCX",
+    %Area58check{
+      encoded: "1CLrrRUwXswyF2EVAtuXyqdk4qb8DSUHCX",
+      decoded: <<1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239>>,
       version: :p2pkh,
       version_bin: <<0>>}
 
@@ -57,19 +59,23 @@ Encode a private key into WIF (Wallet Import Format):
 
     iex> privkey = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF" |> Base.decode16!()
     iex> Area58check.encode(privkey, :wif)
-    %{encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
+    %Area58check{encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
+      decoded: <<1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239>>,
       version: :wif,
       version_bin: <<128>>}
     iex> Area58check.encode(privkey, [128])
-    %{encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
+    %Area58check{encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
+      decoded: <<1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239>>,
       version: :wif,
       version_bin: <<128>>}
     iex> Area58check.encode(privkey, <<128>>)
-    %{encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
+    %Area58check{encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
+      decoded: <<1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239>>,
       version: :wif,
       version_bin: <<128>>}
     iex> Area58check.encode(privkey, 0x80)
-    %{encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
+    %Area58check{encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
+      decoded: <<1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239>>,
       version: :wif,
       version_bin: <<128>>}
 
@@ -78,7 +84,9 @@ Encode a public key into an address:
     iex> {uncompressed_pubkey, _priv_key} = :crypto.generate_key(:ecdh, :crypto.ec_curve(:secp256k1), privkey)
     iex> derived_uncomp_pubkey = :crypto.hash(:ripemd160, :crypto.hash(:sha256, uncompressed_pubkey))
     iex> Area58check.encode(derived_uncomp_pubkey, 0x00)
-    %{encoded: "1CLrrRUwXswyF2EVAtuXyqdk4qb8DSUHCX",
+    %Area58check{
+      decoded: <<124, 106, 230, 190, 9, 150, 81, 133, 169, 75, 13, 161, 139, 201, 42, 157, 252, 238, 97, 23>>,
+      encoded: "1CLrrRUwXswyF2EVAtuXyqdk4qb8DSUHCX",
       version: :p2pkh,
       version_bin: <<0>>}
 
@@ -97,18 +105,17 @@ Error when version is unknown:
 Decoding strings encoded with base58check:
 
     iex> Area58check.decode("1CLrrRUwXswyF2EVAtuXyqdk4qb8DSUHCX")
-    {:ok,
-      %{decoded: <<124, 106, 230, 190, 9, 150, 81, 133, 169, 75, 13, 161, 139, 201,
-          42, 157, 252, 238, 97, 23>>,
-        version: :p2pkh,
-        version_bin: <<0>>}}
+    {:ok, %Area58check{decoded: <<124, 106, 230, 190, 9, 150, 81, 133, 169, 75, 13, 161, 139, 201, 42, 157, 252, 238, 97, 23>>,
+      encoded: "1CLrrRUwXswyF2EVAtuXyqdk4qb8DSUHCX",
+      version: :p2pkh,
+      version_bin: <<0>>}}
     iex> Area58check.decode("5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb")
-    {:ok,
-      %{decoded: <<1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205,
-          239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205,
-          239>>,
-        version: :wif,
-        version_bin: <<0>>}}
+    {:ok, %Area58check{
+      decoded: <<1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239, 1, 35, 69, 103, 137, 171, 205, 239>>,
+      encoded: "5HpneLQNKrcznVCQpzodYwAmZ4AoHeyjuRf9iAHAa498rP5kuWb",
+      version: :wif,
+      version_bin: <<128>>
+    }}
 
 If checksum is not valid returns error:
 
