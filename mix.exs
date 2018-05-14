@@ -1,7 +1,7 @@
 defmodule Area58check.Mixfile do
   use Mix.Project
 
-  @github_url "https://github.com/ihinojal/area58check"
+  @github_url "https://github.com/ivanxuu/area58check"
 
   def project do
     [
